@@ -29,6 +29,9 @@
     
       <link rel="stylesheet" href="../../../assets/stylesheets/main.85bb2934.min.css">
       
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.a6bdf11c.min.css">
+      
       
 
     
@@ -53,11 +56,14 @@
   </head>
   
   
-    <body dir="ltr">
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
   
     
-    
-      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
     
     <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
@@ -106,6 +112,8 @@
         </div>
       </div>
     </div>
+    
+      
     
     
     
@@ -412,86 +420,109 @@
                   
 
 
-<h1 id="cueutf-8">cue文件批量转换UTF-8编码</h1>
+<h1 id="cueutf-8">cue文件批量转换UTF-8编码<a class="headerlink" href="#cueutf-8" title="Permanent link">#</a></h1>
 <p><a href="https://www.daphile.com/">达菲系统</a>不支持GB2312编码的cue文件，需要转换为UTF-8编码。</p>
 <p>这里介绍一种批量转换方法，从GB2312批量转换为UTF-8编码。亲测有效。</p>
-<h2 id="_1">环境</h2>
+<h2 id="_1">环境<a class="headerlink" href="#_1" title="Permanent link">#</a></h2>
 <ul>
 <li>操作系统：Ubuntu Desktop 22.04</li>
 </ul>
-<h2 id="_2">准备脚本</h2>
-<p>用到的命令有2个（都是系统预装的，不需要额外安装）：</p>
-<ul>
-<li><code>iconv -f gb2312 -t utf-8 "filename" -c -o "filename.tmp"</code><ul>
-<li>从gb2312编码转换为utf-8编码，并保存<code>-o</code>到另外一个文件</li>
-<li><code>-c</code>： omit invalid characters from output</li>
-<li>注意原文件必须是GB2312，否则也能转换成功，但是转换后的文件乱码。所以需要先判断编码类型</li>
-</ul>
-</li>
-<li><code>file --mime-encoding -b filename</code><ul>
-<li>输出文件名及其编码信息</li>
-<li><code>-b</code>是 brief 的意思会省略文件名</li>
-</ul>
-</li>
-</ul>
-<p>编辑脚本文件<code>~/bin/iconv-gb2312-to-utf8.sh</code>，内容如下:</p>
-<pre><code class="language-sh">#!/bin/sh -e
-
-convert() {
-    if [ ! -f &quot;$1.bak&quot; ]; then
-        echo &quot;back up to: $1.bak&quot;
-        cp &quot;$1&quot; &quot;$1.bak&quot;;
-    fi
-
-    echo -n &quot;converting, &quot;
-    iconv -f gb2312 -t utf-8 &quot;$1&quot; -c -o &quot;$1.tmp&quot;
-    mv &quot;$1.tmp&quot; &quot;$1&quot; -f;
-    echo &quot;done!&quot;
-}
-
-isgb2312() {
-    if [ &quot;$1&quot; = &quot;iso-8859-1&quot; ]; then
-        echo &quot;1&quot;
-        return
-    fi
-
-    echo &quot;0&quot;
-}
-
-main() {
-    file --mime-encoding &quot;$1&quot;
-
-    ENCODING=`file -b --mime-encoding &quot;$1&quot;`
-
-    if [ &quot;$(isgb2312 $ENCODING)&quot; = &quot;1&quot; ]; then
-        convert &quot;$1&quot;
-    fi
-}
-
-main &quot;$@&quot;
-</code></pre>
-<ul>
-<li>添加执行权限<code>chmod +x ~/bin/iconv-gb2312-to-utf8.sh</code></li>
-<li>脚本放<code>~/bin</code>下面会被环境变量<code>PATH</code>收集到，需要重开一下terminal。<ul>
-<li>原因在<code>~/.profile</code>文件：</li>
-</ul>
-</li>
-</ul>
-<pre><code class="language-sh"># 。。。
-# set PATH so it includes user's private bin if it exists
-if [ -d &quot;$HOME/bin&quot; ] ; then
-    PATH=&quot;$HOME/bin:$PATH&quot;
-fi
-
-# set PATH so it includes user's private bin if it exists
-if [ -d &quot;$HOME/.local/bin&quot; ] ; then
-    PATH=&quot;$HOME/.local/bin:$PATH&quot;
-fi
-</code></pre>
-<h2 id="_3">执行脚本</h2>
+<h2 id="_2">准备脚本<a class="headerlink" href="#_2" title="Permanent link">#</a></h2>
+<p>用到的命令有2个（都是系统预装的，不需要额外安装）
+- <code>iconv -f gb2312 -t utf-8 "filename" -c -o "filename.tmp"</code>
+    - 从gb2312编码转换为utf-8编码，并保存<code>-o</code>到另外一个文件
+    - <code>-c</code>： omit invalid characters from output
+    - 注意原文件必须是GB2312，否则也能转换成功，但是转换后的文件乱码。所以需要先判断编码类型
+- <code>file --mime-encoding -b filename</code>
+    - 输出文件名及其编码信息
+    - <code>-b</code>是 brief 的意思会省略文件名</p>
+<p>编辑脚本文件<code>~/bin/iconv-gb2312-to-utf8.sh</code>，内容如下:
+<div class="language-sh highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-0-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-0-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-0-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-0-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-0-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-0-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-0-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-0-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-0-10">10</a></span>
+<span class="normal"><a href="#__codelineno-0-11">11</a></span>
+<span class="normal"><a href="#__codelineno-0-12">12</a></span>
+<span class="normal"><a href="#__codelineno-0-13">13</a></span>
+<span class="normal"><a href="#__codelineno-0-14">14</a></span>
+<span class="normal"><a href="#__codelineno-0-15">15</a></span>
+<span class="normal"><a href="#__codelineno-0-16">16</a></span>
+<span class="normal"><a href="#__codelineno-0-17">17</a></span>
+<span class="normal"><a href="#__codelineno-0-18">18</a></span>
+<span class="normal"><a href="#__codelineno-0-19">19</a></span>
+<span class="normal"><a href="#__codelineno-0-20">20</a></span>
+<span class="normal"><a href="#__codelineno-0-21">21</a></span>
+<span class="normal"><a href="#__codelineno-0-22">22</a></span>
+<span class="normal"><a href="#__codelineno-0-23">23</a></span>
+<span class="normal"><a href="#__codelineno-0-24">24</a></span>
+<span class="normal"><a href="#__codelineno-0-25">25</a></span>
+<span class="normal"><a href="#__codelineno-0-26">26</a></span>
+<span class="normal"><a href="#__codelineno-0-27">27</a></span>
+<span class="normal"><a href="#__codelineno-0-28">28</a></span>
+<span class="normal"><a href="#__codelineno-0-29">29</a></span>
+<span class="normal"><a href="#__codelineno-0-30">30</a></span>
+<span class="normal"><a href="#__codelineno-0-31">31</a></span>
+<span class="normal"><a href="#__codelineno-0-32">32</a></span>
+<span class="normal"><a href="#__codelineno-0-33">33</a></span>
+<span class="normal"><a href="#__codelineno-0-34">34</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1"></a><span class="ch">#!/bin/sh -e</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2"></a>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3"></a>convert<span class="o">()</span><span class="w"> </span><span class="o">{</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span>!<span class="w"> </span>-f<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$1</span><span class="s2">.bak&quot;</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5"></a><span class="w">        </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;back up to: </span><span class="nv">$1</span><span class="s2">.bak&quot;</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6"></a><span class="w">        </span>cp<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$1</span><span class="s2">&quot;</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$1</span><span class="s2">.bak&quot;</span><span class="p">;</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7"></a><span class="w">    </span><span class="k">fi</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8"></a>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9"></a><span class="w">    </span><span class="nb">echo</span><span class="w"> </span>-n<span class="w"> </span><span class="s2">&quot;converting, &quot;</span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10"></a><span class="w">    </span>iconv<span class="w"> </span>-f<span class="w"> </span>gb2312<span class="w"> </span>-t<span class="w"> </span>utf-8<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$1</span><span class="s2">&quot;</span><span class="w"> </span>-c<span class="w"> </span>-o<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$1</span><span class="s2">.tmp&quot;</span>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11"></a><span class="w">    </span>mv<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$1</span><span class="s2">.tmp&quot;</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$1</span><span class="s2">&quot;</span><span class="w"> </span>-f<span class="p">;</span>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12"></a><span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;done!&quot;</span>
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13"></a><span class="o">}</span>
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14"></a>
+</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15"></a>isgb2312<span class="o">()</span><span class="w"> </span><span class="o">{</span>
+</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$1</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;iso-8859-1&quot;</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17"></a><span class="w">        </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;1&quot;</span>
+</span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18"></a><span class="w">        </span><span class="k">return</span>
+</span><span id="__span-0-19"><a id="__codelineno-0-19" name="__codelineno-0-19"></a><span class="w">    </span><span class="k">fi</span>
+</span><span id="__span-0-20"><a id="__codelineno-0-20" name="__codelineno-0-20"></a>
+</span><span id="__span-0-21"><a id="__codelineno-0-21" name="__codelineno-0-21"></a><span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;0&quot;</span>
+</span><span id="__span-0-22"><a id="__codelineno-0-22" name="__codelineno-0-22"></a><span class="o">}</span>
+</span><span id="__span-0-23"><a id="__codelineno-0-23" name="__codelineno-0-23"></a>
+</span><span id="__span-0-24"><a id="__codelineno-0-24" name="__codelineno-0-24"></a>main<span class="o">()</span><span class="w"> </span><span class="o">{</span>
+</span><span id="__span-0-25"><a id="__codelineno-0-25" name="__codelineno-0-25"></a><span class="w">    </span>file<span class="w"> </span>--mime-encoding<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$1</span><span class="s2">&quot;</span>
+</span><span id="__span-0-26"><a id="__codelineno-0-26" name="__codelineno-0-26"></a>
+</span><span id="__span-0-27"><a id="__codelineno-0-27" name="__codelineno-0-27"></a><span class="w">    </span><span class="nv">ENCODING</span><span class="o">=</span><span class="sb">`</span>file<span class="w"> </span>-b<span class="w"> </span>--mime-encoding<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$1</span><span class="s2">&quot;</span><span class="sb">`</span>
+</span><span id="__span-0-28"><a id="__codelineno-0-28" name="__codelineno-0-28"></a>
+</span><span id="__span-0-29"><a id="__codelineno-0-29" name="__codelineno-0-29"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span>isgb2312<span class="w"> </span><span class="nv">$ENCODING</span><span class="k">)</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;1&quot;</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+</span><span id="__span-0-30"><a id="__codelineno-0-30" name="__codelineno-0-30"></a><span class="w">        </span>convert<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$1</span><span class="s2">&quot;</span>
+</span><span id="__span-0-31"><a id="__codelineno-0-31" name="__codelineno-0-31"></a><span class="w">    </span><span class="k">fi</span>
+</span><span id="__span-0-32"><a id="__codelineno-0-32" name="__codelineno-0-32"></a><span class="o">}</span>
+</span><span id="__span-0-33"><a id="__codelineno-0-33" name="__codelineno-0-33"></a>
+</span><span id="__span-0-34"><a id="__codelineno-0-34" name="__codelineno-0-34"></a>main<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$@</span><span class="s2">&quot;</span>
+</span></code></pre></div></td></tr></table></div>
+- 添加执行权限<code>chmod +x ~/bin/iconv-gb2312-to-utf8.sh</code>
+- 脚本放<code>~/bin</code>下面会被环境变量<code>PATH</code>收集到，需要重开一下terminal。
+    - 原因在<code>~/.profile</code>文件：</p>
+<div class="language-sh highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># 。。。</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="c1"># set PATH so it includes user&#39;s private bin if it exists</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span>-d<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$HOME</span><span class="s2">/bin&quot;</span><span class="w"> </span><span class="o">]</span><span class="w"> </span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">    </span><span class="nv">PATH</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$HOME</span><span class="s2">/bin:</span><span class="nv">$PATH</span><span class="s2">&quot;</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="k">fi</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="c1"># set PATH so it includes user&#39;s private bin if it exists</span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span>-d<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$HOME</span><span class="s2">/.local/bin&quot;</span><span class="w"> </span><span class="o">]</span><span class="w"> </span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="w">    </span><span class="nv">PATH</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$HOME</span><span class="s2">/.local/bin:</span><span class="nv">$PATH</span><span class="s2">&quot;</span>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="k">fi</span>
+</span></code></pre></div>
+<h2 id="_3">执行脚本<a class="headerlink" href="#_3" title="Permanent link">#</a></h2>
 <p>在含cue文件夹执行以下命令</p>
-<pre><code class="language-sh">find ~+ -iname &quot;*.cue&quot; -and -type f -exec iconv-gb2312-to-utf8.sh &quot;{}&quot; \;
-</code></pre>
+<div class="language-sh highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>find<span class="w"> </span>~+<span class="w"> </span>-iname<span class="w"> </span><span class="s2">&quot;*.cue&quot;</span><span class="w"> </span>-and<span class="w"> </span>-type<span class="w"> </span>f<span class="w"> </span>-exec<span class="w"> </span>iconv-gb2312-to-utf8.sh<span class="w"> </span><span class="s2">&quot;{}&quot;</span><span class="w"> </span><span class="se">\;</span>
+</span></code></pre></div>
 <ul>
 <li>find命令会查找所有cue文件(<strong>包括子孙目录</strong>)，交给脚本进行编码转换</li>
 <li><code>~+</code>是为了让find输出full path，即输出绝对路径（可能这里非必要，没有测试）</li>
@@ -537,7 +568,7 @@ fi
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": "../../..", "features": [], "search": "../../../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["content.code.copy", "content.code.select", "content.code.annotate"], "search": "../../../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
       <script src="../../../assets/javascripts/bundle.fac441b0.min.js"></script>

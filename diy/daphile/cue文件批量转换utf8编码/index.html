@@ -428,14 +428,20 @@
 <li>操作系统：Ubuntu Desktop 22.04</li>
 </ul>
 <h2 id="_2">准备脚本<a class="headerlink" href="#_2" title="Permanent link">#</a></h2>
-<p>用到的命令有2个（都是系统预装的，不需要额外安装）
-- <code>iconv -f gb2312 -t utf-8 "filename" -c -o "filename.tmp"</code>
-    - 从gb2312编码转换为utf-8编码，并保存<code>-o</code>到另外一个文件
-    - <code>-c</code>： omit invalid characters from output
-    - 注意原文件必须是GB2312，否则也能转换成功，但是转换后的文件乱码。所以需要先判断编码类型
-- <code>file --mime-encoding -b filename</code>
-    - 输出文件名及其编码信息
-    - <code>-b</code>是 brief 的意思会省略文件名</p>
+<p>用到的命令有2个（都是系统预装的，不需要额外安装）</p>
+<ul>
+<li><code>iconv -f gb2312 -t utf-8 "filename" -c -o "filename.tmp"</code><ul>
+<li>从gb2312编码转换为utf-8编码，并保存<code>-o</code>到另外一个文件</li>
+<li><code>-c</code>： omit invalid characters from output</li>
+<li>注意原文件必须是GB2312，否则也能转换成功，但是转换后的文件乱码。所以需要先判断编码类型</li>
+</ul>
+</li>
+<li><code>file --mime-encoding -b filename</code><ul>
+<li>输出文件名及其编码信息</li>
+<li><code>-b</code>是 brief 的意思会省略文件名./push </li>
+</ul>
+</li>
+</ul>
 <p>编辑脚本文件<code>~/bin/iconv-gb2312-to-utf8.sh</code>，内容如下:
 <div class="language-sh highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-1"> 1</a></span>
 <span class="normal"><a href="#__codelineno-0-2"> 2</a></span>
